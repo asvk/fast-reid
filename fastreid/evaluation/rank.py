@@ -111,6 +111,9 @@ def eval_market1501(distmat, q_feats, g_feats, q_pids, g_pids, q_camids, g_camid
     dim = q_feats.shape[1]
 
     index = faiss.IndexFlatL2(dim)
+    g_feats = g_feats.detach().cpu().numpy()
+    q_feats = q_feats.detach().cpu().numpy()
+
     index.add(g_feats)
 
     if num_g < max_rank:
@@ -122,7 +125,7 @@ def eval_market1501(distmat, q_feats, g_feats, q_pids, g_pids, q_camids, g_camid
     else:
         _, indices = index.search(q_feats, k=num_g)
 
-    matches = (g_pids[indices] == q_pids[:, np.newaxis]).astype(np.int32)
+    matches = (g_pids[indices] == q_pids[:, np.newaxis])
 
     # compute cmc curve for each query
     all_cmc = []
